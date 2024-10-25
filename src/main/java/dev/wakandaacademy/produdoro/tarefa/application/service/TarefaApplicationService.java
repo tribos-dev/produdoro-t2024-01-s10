@@ -40,4 +40,9 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - detalhaTarefa");
         return tarefa;
     }
+	@Override
+	public void ativaTarefa(String token, UUID idTarefa) {
+		// TODO Auto-generated method stub
+		
+	}
 }
