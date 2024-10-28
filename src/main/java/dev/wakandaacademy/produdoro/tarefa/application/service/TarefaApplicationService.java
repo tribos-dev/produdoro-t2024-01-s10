@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,7 +43,18 @@ public class TarefaApplicationService implements TarefaService {
     }
 	@Override
 	public void ativaTarefa(String token, UUID idTarefa) {
-		// TODO Auto-generated method stub
-		
+		log.info("[inicia] TarefaApplicationService - ativaTarefa");
+		Tarefa tarefa = tarefaRepository.buscaTarefaPorId(idTarefa).orElseThrow(()-> APIException.build(HttpStatus.NOT_FOUND, "Id da tarefa invalido!"));
+		desativaTarefaAtiva();
+		tarefa.ativaTarefa();
+		tarefaRepository.salva(tarefa);
+		log.info("[finaliza] TarefaApplicationService - ativaTarefa");
+	}
+	public void desativaTarefaAtiva() {
+		Optional<Tarefa> tarefaAtiva = tarefaRepository.buscaTarefaAtiva();
+		tarefaAtiva.ifPresent(tarefaAtual -> {
+			tarefaAtual.desativaTarefa();
+			tarefaRepository.salva(tarefaAtual);
+		});
 	}
 }
