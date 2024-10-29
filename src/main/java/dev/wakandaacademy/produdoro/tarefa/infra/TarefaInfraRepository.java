@@ -2,14 +2,16 @@ package dev.wakandaacademy.produdoro.tarefa.infra;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
-import dev.wakandaacademy.produdoro.tarefa.domain.StatusAtivacaoTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TarefaInfraRepository implements TarefaRepository {
     private final TarefaSpringMongoDBRepository tarefaSpringMongoDBRepository;
+	private final MongoTemplate mongoTemplate;
 
     @Override
     public Tarefa salva(Tarefa tarefa) {
@@ -38,10 +41,11 @@ public class TarefaInfraRepository implements TarefaRepository {
         return tarefaPorId;
     }
 	@Override
-	public Optional<Tarefa> buscaTarefaAtiva() {
-		log.info("[inicia] TarefaInfraRepository - buscaTarefaPorId");
-		Optional<Tarefa> tarefaAtiva = tarefaSpringMongoDBRepository.findByStatusAtivacao(StatusAtivacaoTarefa.ATIVA);
-		log.info("[finaliza] TarefaInfraRepository - buscaTarefaPorId");
-		return tarefaAtiva;
+	public void desativaTarefaAtiva(UUID idUsuario) {
+		log.info("[inicia] TarefaInfraRepository - desativaTarefaAtiva");
+		Query query = new Query(Criteria.where("statusAtivacao").is("ATIVA").and("idUsuario").is(idUsuario));
+		Update update = new Update().set("statusAtivacao", "INATIVA");
+		mongoTemplate.updateMulti(query, update, Tarefa.class);
+		log.info("[finaliza] TarefaInfraRepository - desativaTarefaAtiva");
 	}
 }
