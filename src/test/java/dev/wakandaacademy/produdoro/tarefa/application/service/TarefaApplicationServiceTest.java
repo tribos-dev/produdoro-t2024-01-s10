@@ -2,6 +2,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,8 +19,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
@@ -61,7 +64,7 @@ class TarefaApplicationServiceTest {
     }
     
     @Test
-    @DisplayName("Ativa tarefa - teste")
+    @DisplayName("Ativa tarefa - deve ativar tarefa")
     void ativaTarefaDeveAtivarTarefa() {
     	UUID idTarefa = DataHelper.createTarefa().getIdTarefa();
     	UUID idUsuario = DataHelper.createUsuario().getIdUsuario();
@@ -75,4 +78,16 @@ class TarefaApplicationServiceTest {
     	verify(tarefaRepository, times(1)).desativaTarefaAtiva(idUsuario);
     	assertEquals(StatusAtivacaoTarefa.ATIVA, tarefa.getStatusAtivacao());   	
     }
+    @Test
+    @DisplayName("Ativa tarefa com id invalido - deve retornar exception")
+    void ativaTarefaDeveRetornarErro() {
+    	UUID idTarefaInvalido = UUID.randomUUID();
+    	String email = "email@gmail.com";
+    	when(tarefaRepository.buscaTarefaPorId(idTarefaInvalido)).thenReturn(Optional.empty());
+    	APIException ex = assertThrows(APIException.class,() -> {
+    		tarefaApplicationService.ativaTarefa(email, idTarefaInvalido);
+    		});
+    	assertEquals(HttpStatus.NOT_FOUND, ex.getStatusException());   	
+    }
+
 }
