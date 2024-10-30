@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.codec.ByteArrayDecoder;
+import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -36,21 +38,35 @@ class UsuarioApplicationServiceTest {
 
     @Test
     void alteraStatusParaFoco_DeveAlterarStatusParaFoco(){
+        //cenario
         doNothing().when(usuarioMock).validaUsuarioPorId(idUsuario);
 
+        //acao
         usuarioApplicationService.alteraStatusParaFoco(usuarioEmail, idUsuario);
 
+        //verificacao
         verify(usuarioRepository).buscaUsuarioPorEmail(usuarioEmail);
         verify(usuarioMock).validaUsuarioPorId(idUsuario);
         verify(usuarioMock).alteraStatusParaFoco();
         verify(usuarioRepository).salva(usuarioMock);
     }
 
-//    @Test
-//    void alteraStatusParaFoco_DeveLancarExcecaoUsuarioNaoEncontrado(){
-//        when(usuarioRepository.buscaUsuarioPorEmail(usuarioEmail)).thenReturn(null);
-//        assertThrows(APIException.class, () -> usuarioApplicationService.alteraStatusParaFoco(usuarioEmail, idUsuario));
-//        verify(usuarioRepository, never()).salva(any());
-//    }
+    @Test
+    void alteraStatusParaFoco_DeveLancarExcecaoUsuarioNaoEncontrado(){
+        //cenario
+        UUID idUsuarioNaoEncontrado = UUID.randomUUID();
 
+        when(usuarioRepository.buscaUsuarioPorEmail(usuarioEmail)).thenReturn(null);
+        doThrow(APIException.build(HttpStatus.BAD_REQUEST, "Usuario não encontrado!"))
+                .when(usuarioRepository).buscaUsuarioPorId(idUsuarioNaoEncontrado);
+
+        //acao
+        APIException exception = assertThrows(APIException.class,
+                () ->usuarioApplicationService.alteraStatusParaFoco(usuarioEmail, idUsuarioNaoEncontrado));
+
+        //verificacao
+        assertEquals("Usuário não encontrado", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
+        verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuarioEmail);
+    }
 }

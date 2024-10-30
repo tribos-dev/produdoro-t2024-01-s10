@@ -2,7 +2,9 @@ package dev.wakandaacademy.produdoro.usuario.application.service;
 
 import javax.validation.Valid;
 
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import dev.wakandaacademy.produdoro.credencial.application.service.CredencialService;
@@ -47,6 +49,9 @@ public class UsuarioApplicationService implements UsuarioService {
 	public void alteraStatusParaFoco(String usuarioEmail, UUID idUsuario) {
 		log.info("[inicia] UsuarioApplicationService - alteraStatusParaFoco");
 		Usuario usuarioFoco = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+		if (usuarioFoco == null){
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário não encontrado");
+		}
 		usuarioFoco.validaUsuarioPorId(idUsuario);
 		usuarioFoco.alteraStatusParaFoco();
 		usuarioRepository.salva(usuarioFoco);
