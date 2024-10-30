@@ -48,7 +48,6 @@ public class UsuarioApplicationService implements UsuarioService {
 		log.info("[inicia] UsuarioApplicationService - mudaStatusParaPausaLonga");
 		usuarioRepository.buscaUsuarioPorId(idUsuario);
 		Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(usuarioT);
-		usuario.validaUsuario(idUsuario);
 		usuario.mudaStatusParaPausaLonga();
 		usuarioRepository.salva(usuario);
 		log.info("[finaliza] UsuarioApplicationService - mudaStatusParaPausaLonga");
