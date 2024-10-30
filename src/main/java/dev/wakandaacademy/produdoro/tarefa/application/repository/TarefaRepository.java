@@ -7,7 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface TarefaRepository {
-
     Tarefa salva(Tarefa tarefa);
     Optional<Tarefa> buscaTarefaPorId(UUID idTarefa);
+    List<Tarefa> buscaTodasTarefasId(UUID idUsuario);
+    void deletaTarefas(List<Tarefa> tarefas);
 }
