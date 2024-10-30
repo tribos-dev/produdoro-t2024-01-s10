@@ -3,6 +3,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -15,11 +16,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
+import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
+import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
+import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 
 @ExtendWith(MockitoExtension.class)
 class TarefaApplicationServiceTest {
@@ -31,6 +38,8 @@ class TarefaApplicationServiceTest {
     //	@MockBean
     @Mock
     TarefaRepository tarefaRepository;
+    @Mock
+    UsuarioRepository usuarioRepository;
 
     @Test
     void deveRetornarIdTarefaNovaCriada() {
@@ -44,7 +53,32 @@ class TarefaApplicationServiceTest {
         assertEquals(UUID.class, response.getIdTarefa().getClass());
     }
 
-
+    @Test
+    void deveListarTarefasPorUsuario() {
+    	Usuario usuarioEncontrado = DataHelper.createUsuario();
+    	List<Tarefa> listaTarefas = DataHelper.createListTarefa();
+    	when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuarioEncontrado);
+    	when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuarioEncontrado);
+    	when(tarefaRepository.buscaTarefaPorUsuario(any())).thenReturn(listaTarefas);
+    	String usuario = "email@email.com";
+    	UUID idUsuario = UUID.fromString("a713162f-20a9-4db9-a85b-90cd51ab18f4");
+    	List<TarefaListResponse> response = tarefaApplicationService.buscaTarefaPorUsuario(usuario, idUsuario);
+    	assertNotNull(response);
+    	assertEquals(ArrayList.class, response.getClass());
+    	assertEquals(8, response.size());
+    }
+    
+    @Test
+    void deveListarTarefasPorUsuarioFalha() {
+    	Usuario usuarioEncontrado = DataHelper.createUsuario();
+    	when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuarioEncontrado);
+    	when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuarioEncontrado);    
+    	String usuario = "email@email.com";
+    	UUID idUsuario = UUID.randomUUID(); 
+    	APIException ex = assertThrows(APIException.class, ()->{tarefaApplicationService.buscaTarefaPorUsuario(usuario, idUsuario);});
+    	assertEquals("A Credencial de autenticação não é válida", ex.getMessage());
+    	assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusException());
+    }
 
     public TarefaRequest getTarefaRequest() {
         TarefaRequest request = new TarefaRequest("tarefa 1", UUID.randomUUID(), null, null, 0);
