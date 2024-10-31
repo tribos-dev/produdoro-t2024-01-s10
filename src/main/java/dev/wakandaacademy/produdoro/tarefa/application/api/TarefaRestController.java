@@ -37,6 +37,8 @@ public class TarefaRestController implements TarefaAPI {
     @Override
     public void concluiTarefa(String token, UUID idTarefa) {
         log.info("[inicia] TarefaRestController - concluiTarefa");
+        String usuario = getUsuarioByToken(token);
+        tarefaService.concluiTarefa(usuario, idTarefa);
         log.info("[Finish] TarefaRestController - concluiTarefa");
     }
 
@@ -46,5 +48,4 @@ public class TarefaRestController implements TarefaAPI {
         log.info("[usuario] {}", usuario);
         return usuario;
     }
-
 }

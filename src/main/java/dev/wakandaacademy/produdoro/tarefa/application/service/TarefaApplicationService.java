@@ -29,6 +29,7 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - criaNovaTarefa");
         return TarefaIdResponse.builder().idTarefa(tarefaCriada.getIdTarefa()).build();
     }
+
     @Override
     public Tarefa detalhaTarefa(String usuario, UUID idTarefa) {
         log.info("[inicia] TarefaApplicationService - detalhaTarefa");
@@ -39,5 +40,11 @@ public class TarefaApplicationService implements TarefaService {
         tarefa.pertenceAoUsuario(usuarioPorEmail);
         log.info("[finaliza] TarefaApplicationService - detalhaTarefa");
         return tarefa;
+    }
+
+    @Override
+    public void concluiTarefa(String token, UUID idTarefa) {
+        log.info("[inicia] TarefaRestController - concluiTarefa");
+        log.info("[Finish] TarefaRestController - concluiTarefa");
     }
 }
