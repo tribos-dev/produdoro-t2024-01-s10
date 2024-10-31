@@ -47,13 +47,24 @@ public class Usuario {
 	}
 
     public void validaUsuarioPorId(UUID idUsuario) {
-		if (!this.idUsuario.equals((idUsuario))){
-			log.error("Id não pertence ao usuário");
-				throw APIException.build(HttpStatus.BAD_REQUEST, "Usuario não encontrado");
+		if (!this.idUsuario.equals(idUsuario)){
+				throw APIException.build(HttpStatus.UNAUTHORIZED, "Id não pertence ao usuário");
 		}
     }
 
-	public void alteraStatusParaFoco() {
+	public void alteraStatusParaFoco(UUID idUsuario) {
+		validaUsuarioPorId(idUsuario);
+		verificaStatusFoco();
+	}
+
+	public void verificaStatusFoco() {
+		if (this.status.equals(StatusUsuario.FOCO)){
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em foco!");
+		}
+		mudaStatusParaFoco();
+	}
+
+	private void mudaStatusParaFoco(){
 		this.status = StatusUsuario.FOCO;
 	}
 }
