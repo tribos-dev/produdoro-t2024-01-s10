@@ -56,60 +56,50 @@ class UsuarioApplicationServiceTest {
         //cenario
         UUID idUsuarioNaoEncontrado = UUID.randomUUID();
 
-//        when(usuarioRepository.buscaUsuarioPorEmail("email@email.com")).thenReturn(null);
+        when(usuarioRepository.buscaUsuarioPorEmail("email@email.com")).thenReturn(null);
         doThrow(APIException.build(HttpStatus.BAD_REQUEST, "Usuario não encontrado!"))
-                .when(usuarioRepository).buscaUsuarioPorEmail("usuario@email.com");
+                .when(usuarioRepository).buscaUsuarioPorId(idUsuarioNaoEncontrado);
 
         //acao
         APIException exception = assertThrows(APIException.class,
-                () ->usuarioApplicationService.mudaStatusParaFoco("email@email.com", idUsuarioNaoEncontrado));
+                () -> usuarioApplicationService.mudaStatusParaFoco("email@email.com", idUsuarioNaoEncontrado));
 
         //verificacao
         assertEquals("Usuario não encontrado!", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
         verify(usuarioRepository, times(1)).buscaUsuarioPorEmail("email@email.com");
-//        UUID idUsuarioInexistente = UUID.randomUUID();
-//        doThrow(APIException.build(HttpStatus.BAD_REQUEST, "Usuario não encontrado!"))
-//                .when(usuarioRepository).buscaUsuarioPorId(idUsuarioInexistente);
-//        // acao
-//        APIException exception = assertThrows(APIException.class,
-//                () -> usuarioApplicationService.mudaStatusParaFoco("email@email.com", idUsuarioInexistente));
-//        // verificacao
-//        assertEquals("Usuario não encontrado!", exception.getMessage());
-//        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
-//        verify(usuarioRepository, times(1)).buscaUsuarioPorId(idUsuarioInexistente);
+        verify(usuarioRepository, times(1)).buscaUsuarioPorId(idUsuarioNaoEncontrado);
+    }
 
-//        when(usuarioRepository.buscaUsuarioPorEmail(anyString())).thenReturn(DataHelper.createUsuario());
-//
-//        assertThrows(APIException.class, () -> usuarioApplicationService.mudaStatusParaFoco(usuarioEmail, UUID.randomUUID()));
-//        //cenario
-//        UUID idUsuarioNaoEncontrado = UUID.randomUUID();
-//
-//        when(usuarioRepository.buscaUsuarioPorEmail(usuarioEmail)).thenReturn(usuarioMock);
-//        doThrow(APIException.build(HttpStatus.BAD_REQUEST, "Usuario não encontrado!"))
-//                .when(usuarioRepository).buscaUsuarioPorId(idUsuarioNaoEncontrado);
-//
-//        //acao
-//        APIException exception = assertThrows(APIException.class,
-//                () ->usuarioApplicationService.mudaStatusParaFoco(usuarioEmail, idUsuarioNaoEncontrado));
-//
-//        //verificacao
-//        assertEquals("Usuário não encontrado", exception.getMessage());
-//        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
-//        verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuarioEmail);
-//    }
-//        //cenario
-//        UUID uuidInvalido = UUID.randomUUID();
-//
-//        when(usuarioRepository.buscaUsuarioPorEmail(usuarioEmail)).thenReturn(usuarioMock);
-//
-//        //acao
-//        APIException exception = assertThrows(APIException.class,
-//                () -> usuarioApplicationService.mudaStatusParaFoco(usuarioEmail, uuidInvalido));
-//
-//        //verificacao
-//        assertEquals("Usuário não encontrado", exception.getMessage());
-//        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
-//        verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuarioEmail);
+    @Test
+    void alteraStatusParaFoco_UsuarioJaEstaEmFoco(){
+        //cenario
+        Usuario usuario = DataHelper.createUsuario();
+        when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
+        usuarioApplicationService.mudaStatusParaFoco(usuario.getEmail(), usuario.getIdUsuario());
+
+        //acao
+        APIException exception = assertThrows(APIException.class, usuario::verificaStatusFoco);
+
+        //verificacao
+        assertEquals("Usuário já está em foco!", exception.getMessage());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
+        verify(usuarioRepository, times(1)).buscaUsuarioPorEmail("email@email.com");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
