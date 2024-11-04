@@ -46,7 +46,6 @@ class UsuarioApplicationServiceTest {
 
         //verificacao
         verify(usuarioRepository).buscaUsuarioPorEmail(usuarioEmail);
-        verify(usuarioMock).validaUsuarioPorId(idUsuario);
         verify(usuarioMock).alteraStatusParaFoco(idUsuario);
         verify(usuarioRepository).salva(usuarioMock);
     }
