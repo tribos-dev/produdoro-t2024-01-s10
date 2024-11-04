@@ -3,10 +3,18 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.UUID;
 
+import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.tarefa.application.api.NovaPosicaoRequest;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaAlteracaoRequest;
+import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
+import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +36,8 @@ class TarefaApplicationServiceTest {
     //	@MockBean
     @Mock
     TarefaRepository tarefaRepository;
+    @Mock
+    UsuarioRepository usuarioRepository;
 
     @Test
     void deveRetornarIdTarefaNovaCriada() {
@@ -48,16 +58,23 @@ class TarefaApplicationServiceTest {
         return request;
     }
 
-//    @Test
-//    void deveModificarOrdemTarefa() {
-//        Usuario usuario = DataHelper.createUsuario();
-//        Tarefa tarefa = DataHelper.createTarefa();
-//        NovaPosicaoRequest novaPosicaoRequest = getNovaPosicaoRequest();
-//        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
-//        when(tarefaRepository.buscaTarefaPorId(any())).thenReturn(Optional.of(tarefa));
-//
-//        tarefaApplicationService.modificaOrdemTarefa(usuario.getEmail(), novaPosicaoRequest, tarefa.getIdTarefa());
-//
-//        verify(tarefaRepository, times(1)).salva(tarefa);
-//    }
+    @Test
+    void deveModificarOrdemTarefa() {
+        Usuario usuario = DataHelper.createUsuario();
+        Tarefa tarefa = DataHelper.createTarefa();
+        TarefaAlteracaoRequest tarefaAlteracaoRequest = getTarefaAlteracaoRequest();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorId(any())).thenReturn(Optional.of(tarefa));
+
+        tarefaApplicationService.editaTarefa(usuario.getEmail(), tarefa.getIdTarefa(), tarefaAlteracaoRequest);
+
+        verify(tarefaRepository, times(1)).salva(tarefa);
+    }
+
+    private TarefaAlteracaoRequest getTarefaAlteracaoRequest() {
+        TarefaAlteracaoRequest tarefaAlteracaoRequest = TarefaAlteracaoRequest.builder()
+                .descricao("Tarefa alterada")
+                .build();
+        return tarefaAlteracaoRequest;
+    }
 }

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class TarefaAlteracaoRequest {
 
     @NotBlank(message = "o campo não pode estar vazio")
