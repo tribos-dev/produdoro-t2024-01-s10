@@ -25,6 +25,7 @@ public class TarefaRestController implements TarefaAPI {
 		log.info("[finaliza]  TarefaRestController - postNovaTarefa");
 		return tarefaCriada;
 	}
+	   
 
 	@Override
 	public TarefaDetalhadoResponse detalhaTarefa(String token, UUID idTarefa) {

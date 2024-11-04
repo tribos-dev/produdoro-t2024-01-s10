@@ -22,6 +22,7 @@ import java.util.UUID;
 public class TarefaApplicationService implements TarefaService {
     private final TarefaRepository tarefaRepository;
     private final UsuarioRepository usuarioRepository;
+    private Integer ciclos = 1;
 
 
     @Override
@@ -65,30 +66,30 @@ public class TarefaApplicationService implements TarefaService {
 
     private void processaIncrementoPomodoro(Optional<Tarefa> tarefaOpt, Usuario usuario) {
         if (usuario.getStatus() == StatusUsuario.FOCO) {
-            incrementarPomodoro(tarefaOpt);
+            incrementarPomodoro(tarefaOpt, usuario);
         } else {
-            gerenciarCiclosDePomodoro(usuario);
+            atualizaStatusParaFocoSeNecessario(usuario);
         }
-        atualizaStatusParaFocoSeNecessario(usuario);
     }
 
-    private void incrementarPomodoro(Optional<Tarefa> tarefaOpt) {
+    private void incrementarPomodoro(Optional<Tarefa> tarefaOpt, Usuario usuario) {
         tarefaOpt.ifPresent(tarefa -> {
             tarefa.incrementaPomodoro();
+            gerenciarCiclosDePomodoro(usuario);
             tarefaRepository.salva(tarefa);
             log.info("Pomodoro incrementado para a tarefa com id: {}", tarefa.getIdTarefa());
         });
     }
 
     private void gerenciarCiclosDePomodoro(Usuario usuario) {
-        Integer ciclos = 1;  // Este valor poderia vir de um banco de dados ou de um contexto externo
-        if (ciclos < 4) {
+
+        if (this.ciclos < 4) {
             usuario.mudaStatusParaPausaCurta();
-            ciclos++;
+            this.ciclos++;
             log.info("Status alterado para Pausa Curta. Ciclo incrementado para {}", ciclos);
         } else {
             usuario.mudaStatusParaPausaLonga();
-            ciclos = 1;
+            this.ciclos = 1;
             log.info("Status alterado para Pausa Longa. Ciclo resetado.");
         }
         usuarioRepository.salva(usuario);
