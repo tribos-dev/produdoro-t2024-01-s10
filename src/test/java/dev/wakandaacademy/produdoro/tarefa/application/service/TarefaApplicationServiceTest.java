@@ -13,14 +13,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.w3c.dom.stylesheets.LinkStyle;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TarefaApplicationServiceTest {
@@ -62,6 +64,20 @@ class TarefaApplicationServiceTest {
         when(tarefaRepository.salva(tarefa)).thenReturn(tarefa);
         tarefaApplicationService.concluiTarefa(usuario.getEmail(), tarefa.getIdTarefa());
         assertEquals(StatusTarefa.CONCLUIDA, tarefa.getStatus());
+    }
+
+    @Test
+    void deveDeletarTarefasConcluidas(){
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefasConcluidas = DataHelper.creatTarefasConcluidas();
+        List<Tarefa> tarefas = DataHelper.createListTarefa();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefasConcluidas(any())).thenReturn(tarefasConcluidas);
+        when(tarefaRepository.buscaTarefasPorUsuario(any())).thenReturn(tarefas);
+        tarefaApplicationService.deletaTarefasConcluidas(usuario.getEmail(), usuario.getIdUsuario());
+        verify(tarefaRepository, times(1)).deletaVariasTarefas(tarefasConcluidas);
+        verify(tarefaRepository, times(1)).atualizaPosicaoDaTarefa(tarefas);
     }
 
     public TarefaRequest getTarefaRequest() {
