@@ -46,6 +46,11 @@ public class Usuario {
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
 
+	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
+		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())){
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!");
+		}
+	}
 	public void validaUsuario(UUID idUsuario) {
 		if(!this.idUsuario.equals(idUsuario)){
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida!");
