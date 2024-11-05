@@ -47,9 +47,16 @@ public class UsuarioController implements UsuarioAPI {
 
 	}
 
-	private String validaTokenUsuario(String token) {
-		String usuario = tokenService.getUsuarioByBearerToken(token).orElseThrow(
-				() -> APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é valida."));
-		return usuario;
+	@Override
+	public void mudaStatusParaFoco(String token, UUID idUsuario) {
+		log.info("[inicia] UsuarioController - alteraStatusParaFoco");
+		String usuario = validaTokenUsuario(token);
+		usuarioAppplicationService.mudaStatusParaFoco(usuario, idUsuario);
+		log.info("[finaliza] UsuarioController - alteraStatusParaFoco");
 	}
+
+	private String validaTokenUsuario(String token) {
+		return tokenService.getUsuarioByBearerToken(token)
+				.orElseThrow(()-> APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida"));
+			}
 }

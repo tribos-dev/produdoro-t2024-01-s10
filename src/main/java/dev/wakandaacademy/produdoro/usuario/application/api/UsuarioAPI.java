@@ -10,9 +10,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = "/public/v1/usuario")
 public interface UsuarioAPI {
-	@PostMapping
-	@ResponseStatus(code = HttpStatus.CREATED)
-	UsuarioCriadoResponse postNovoUsuario(@RequestBody @Valid UsuarioNovoRequest usuarioNovo);
+    
+    @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    UsuarioCriadoResponse postNovoUsuario(@RequestBody @Valid UsuarioNovoRequest usuarioNovo);
 
 	@GetMapping(value = "/{idUsuario}")
 	@ResponseStatus(code = HttpStatus.OK)
@@ -22,4 +23,9 @@ public interface UsuarioAPI {
 	@ResponseStatus(code = HttpStatus.NO_CONTENT)
 	void mudaStatusPausaLonga(@RequestHeader(name = "Authorization", required = true) String token,
 							  @PathVariable UUID idUsuario);
+
+    @PatchMapping(value = "/foco/{idUsuario}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void mudaStatusParaFoco(@RequestHeader(name = "Authorization") String token,
+                            @PathVariable UUID idUsuario);
 }
