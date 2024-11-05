@@ -11,4 +11,5 @@ public interface TarefaService {
     TarefaIdResponse criaNovaTarefa(TarefaRequest tarefaRequest);
     Tarefa detalhaTarefa(String usuario, UUID idTarefa);
     List<TarefaListResponse> buscaTarefaPorUsuario(String usuario, UUID idUsuario);
+    void concluiTarefa(String usuario, UUID idTarefa);
 }

@@ -45,12 +45,33 @@ public class Usuario {
 		this.status = StatusUsuario.FOCO;
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
-
 	public void validaUsuario(UUID idUsuario) {
 		log.info("[inicia] Usuario - validaUsuario");
-		if(!this.idUsuario.equals(idUsuario)){
+		if (!this.idUsuario.equals(idUsuario)) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "A Credencial de autenticação não é válida");
 		}
 		log.info("[finaliza] Usuario - validaUsuario");
+	}
+
+    public void validaUsuarioPorId(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)){
+				throw APIException.build(HttpStatus.UNAUTHORIZED, "Id não pertence ao usuário");
+		}
+    }
+
+	public void alteraStatusParaFoco(UUID idUsuario) {
+		validaUsuarioPorId(idUsuario);
+		verificaStatusFoco();
+	}
+
+	public void verificaStatusFoco() {
+		if (this.status.equals(StatusUsuario.FOCO)){
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em foco!");
+		}
+		mudaStatusParaFoco();
+	}
+
+	private void mudaStatusParaFoco(){
+		this.status = StatusUsuario.FOCO;
 	}
 }
