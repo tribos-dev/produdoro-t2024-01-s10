@@ -19,5 +19,6 @@ public class TarefaRequest {
     private UUID idArea;
     private UUID idProjeto;
     private int contagemPomodoro;
+    private int posicaoTarefa;
 
 }

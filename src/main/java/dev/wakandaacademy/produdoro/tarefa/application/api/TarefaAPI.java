@@ -20,7 +20,7 @@ public interface TarefaAPI {
     		@PathVariable UUID idTarefa);
 
 
-    @PatchMapping(value = "/{idU0suario}/{novaPosicao}")
+    @PatchMapping(value = "/{idTarefa}/{novaPosicao}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void alteraPosicaoTarefa(@RequestHeader(name = "Authorization", required = true) String token,
                              @PathVariable UUID idTarefa, @RequestParam(value = "novaPosicao") @RequestBody NovaPosicaoRequest novaPosicao);
