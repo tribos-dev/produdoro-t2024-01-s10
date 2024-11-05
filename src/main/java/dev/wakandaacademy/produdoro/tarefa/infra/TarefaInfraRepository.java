@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import org.springframework.data.mongodb.core.query.Update;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,9 +24,8 @@ import java.util.stream.IntStream;
 @Log4j2
 @RequiredArgsConstructor
 public class TarefaInfraRepository implements TarefaRepository {
-
     private final TarefaSpringMongoDBRepository tarefaSpringMongoDBRepository;
-    private final MongoTemplate mongoTemplate;
+	private final MongoTemplate mongoTemplate;
 
     @Override
     public Tarefa salva(Tarefa tarefa) {
@@ -98,4 +98,12 @@ public class TarefaInfraRepository implements TarefaRepository {
         tarefa.atualizaPosicao(novaPosicao);
         return tarefa;
     }
+	@Override
+	public void desativaTarefaAtiva(UUID idUsuario) {
+		log.info("[inicia] TarefaInfraRepository - desativaTarefaAtiva");
+		Query query = new Query(Criteria.where("statusAtivacao").is("ATIVA").and("idUsuario").is(idUsuario));
+		Update update = new Update().set("statusAtivacao", "INATIVA");
+		mongoTemplate.updateMulti(query, update, Tarefa.class);
+		log.info("[finaliza] TarefaInfraRepository - desativaTarefaAtiva");
+	}
 }

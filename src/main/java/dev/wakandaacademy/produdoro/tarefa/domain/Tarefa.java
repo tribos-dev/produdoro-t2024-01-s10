@@ -55,8 +55,22 @@ public class Tarefa {
 		this.posicao = novaPosicao;
     }
 
+    public void desativaTarefa() {
+        this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
+    }
+
+    public void ativaTarefa() {
+        this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
+    }
+
+    public void verificaSeJaEstaAtiva() {
+        if (this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)) {
+            throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");
+        }
+
+    }
+
     public void concluiTarefa() {
         this.status = StatusTarefa.CONCLUIDA;
     }
-
 }
