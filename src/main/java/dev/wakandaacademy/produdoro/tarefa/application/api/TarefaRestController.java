@@ -1,5 +1,10 @@
 package dev.wakandaacademy.produdoro.tarefa.application.api;
 
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import dev.wakandaacademy.produdoro.config.security.service.TokenService;
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.service.TarefaService;
@@ -18,12 +23,12 @@ public class TarefaRestController implements TarefaAPI {
     private final TarefaService tarefaService;
     private final TokenService tokenService;
 
-    public TarefaIdResponse postNovaTarefa(TarefaRequest tarefaRequest) {
-        log.info("[inicia]  TarefaRestController - postNovaTarefa  ");
-        TarefaIdResponse tarefaCriada = tarefaService.criaNovaTarefa(tarefaRequest);
-        log.info("[finaliza]  TarefaRestController - postNovaTarefa");
-        return tarefaCriada;
-    }
+	public TarefaIdResponse postNovaTarefa(TarefaRequest tarefaRequest) {
+		log.info("[inicia]  TarefaRestController - postNovaTarefa  ");
+		TarefaIdResponse tarefaCriada = tarefaService.criaNovaTarefa(tarefaRequest);
+		log.info("[finaliza]  TarefaRestController - postNovaTarefa");
+		return tarefaCriada;
+	}
 
     @Override
     public TarefaDetalhadoResponse detalhaTarefa(String token, UUID idTarefa) {
@@ -33,6 +38,15 @@ public class TarefaRestController implements TarefaAPI {
         log.info("[finaliza] TarefaRestController - detalhaTarefa");
         return new TarefaDetalhadoResponse(tarefa);
     }
+
+	@Override
+	public void incrementaTarefaProdudoro(String token, UUID idTarefa) {
+		log.info("[inicia] TarefaRestController - incrementaTarefaProdudoro");
+		String usuarioEmail = getUsuarioByToken(token);
+		tarefaService.incrementaTarefaProdudoro(idTarefa, usuarioEmail);
+		log.info("[idTarefa] {} ", idTarefa);
+		log.info("[finaliza] TarefaRestController - incrementaTarefaProdudoro");
+	}
 
 	@Override
 	public void deletaTarefasConcluidas(String token, UUID idUsuario) {

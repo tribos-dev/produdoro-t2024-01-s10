@@ -38,7 +38,7 @@ public class Usuario {
 	private StatusUsuario status = StatusUsuario.FOCO;
 	@Builder.Default
 	private Integer quantidadePomodorosPausaCurta = 0;
-	
+
 	public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
 		this.idUsuario = UUID.randomUUID();
 		this.email = usuarioNovo.getEmail();
@@ -46,13 +46,23 @@ public class Usuario {
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
 
+	public void mudaStatusParaPausaCurta() {
+		this.status = StatusUsuario.PAUSA_CURTA;
+	}
+
+	public void mudaStatusParaFoco() {
+		this.status = StatusUsuario.FOCO;
+	}
+
+
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
-		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())){
+		if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!");
 		}
 	}
+
 	public void validaUsuario(UUID idUsuario) {
-		if(!this.idUsuario.equals(idUsuario)){
+		if (!this.idUsuario.equals(idUsuario)) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida!");
 		}
 	}
@@ -63,15 +73,16 @@ public class Usuario {
 	}
 
 	private void validaSeEstaEmPausaLonga() {
-		if (this.status.equals(StatusUsuario.PAUSA_LONGA)){
+		if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
 			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuario ja esta em pausa longa");
 		}
 	}
-    public void validaUsuarioPorId(UUID idUsuario) {
-		if (!this.idUsuario.equals(idUsuario)){
-				throw APIException.build(HttpStatus.UNAUTHORIZED, "Id não pertence ao usuário");
+
+	public void validaUsuarioPorId(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Id não pertence ao usuário");
 		}
-    }
+	}
 
 	public void alteraStatusParaFoco(UUID idUsuario) {
 		validaUsuarioPorId(idUsuario);
@@ -79,13 +90,10 @@ public class Usuario {
 	}
 
 	public void verificaStatusFoco() {
-		if (this.status.equals(StatusUsuario.FOCO)){
+		if (this.status.equals(StatusUsuario.FOCO)) {
 			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em foco!");
 		}
 		mudaStatusParaFoco();
 	}
-
-	private void mudaStatusParaFoco(){
-		this.status = StatusUsuario.FOCO;
-	}
 }
+
