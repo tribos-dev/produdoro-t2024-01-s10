@@ -1,8 +1,5 @@
 package dev.wakandaacademy.produdoro.tarefa.application.api;
 
-
-import java.util.List;
-import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +23,19 @@ public interface TarefaAPI {
     List<TarefaListResponse> buscaTarefasPorIdUsuario(@RequestHeader(name = "Authorization",required = true) String token,
             @PathVariable UUID idUsuario);
 
+    @PatchMapping("ativa-tarefa/{idTarefa}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void ativaTarefa(@RequestHeader(name = "Authorization", required = true) String token,
+            @PathVariable UUID idTarefa);
+
+    @DeleteMapping("/{idUsuario}/deleta-tarefas-concluidas")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void deletaTarefasConcluidas(@RequestHeader(name = "Authorization", required = true) String token,
+                                 @PathVariable UUID idUsuario);
+
+
     @PatchMapping("/conclui-tarefa")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void concluiTarefa(@RequestHeader(name = "Authorization", required = true) String token,
                        @RequestParam(name = "id") UUID idTarefa);
-
 }
-

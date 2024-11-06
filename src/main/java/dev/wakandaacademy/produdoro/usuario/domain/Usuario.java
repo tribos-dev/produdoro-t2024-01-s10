@@ -53,6 +53,27 @@ public class Usuario {
 		log.info("[finaliza] Usuario - validaUsuario");
 	}
 
+	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
+		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())){
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!");
+		}
+	}
+	public void validaUsuario(UUID idUsuario) {
+		if(!this.idUsuario.equals(idUsuario)){
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida!");
+		}
+	}
+
+	public void mudaStatusParaPausaLonga() {
+		validaSeEstaEmPausaLonga();
+		this.status = StatusUsuario.PAUSA_LONGA;
+	}
+
+	private void validaSeEstaEmPausaLonga() {
+		if (this.status.equals(StatusUsuario.PAUSA_LONGA)){
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuario ja esta em pausa longa");
+		}
+	}
     public void validaUsuarioPorId(UUID idUsuario) {
 		if (!this.idUsuario.equals(idUsuario)){
 				throw APIException.build(HttpStatus.UNAUTHORIZED, "Id não pertence ao usuário");

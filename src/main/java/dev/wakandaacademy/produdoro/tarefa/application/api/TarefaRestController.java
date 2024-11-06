@@ -5,12 +5,10 @@ import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.service.TarefaService;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 import lombok.RequiredArgsConstructor;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -36,12 +34,28 @@ public class TarefaRestController implements TarefaAPI {
         return new TarefaDetalhadoResponse(tarefa);
     }
 
+	@Override
+	public void deletaTarefasConcluidas(String token, UUID idUsuario) {
+		log.info("[inicia]  TarefaRestController - deletaTarefasConcluidas");
+		String email = getUsuarioByToken(token);
+		tarefaService.deletaTarefasConcluidas(email, idUsuario);
+		log.info("[finaliza]  TarefaRestController - deletaTarefasConcluidas");
+
+	}
     @Override
     public void concluiTarefa(String token, UUID idTarefa) {
         log.info("[inicia] TarefaRestController - concluiTarefa");
         String usuario = getUsuarioByToken(token);
         tarefaService.concluiTarefa(usuario, idTarefa);
         log.info("[Finish] TarefaRestController - concluiTarefa");
+    }
+
+    @Override
+    public void ativaTarefa(String token, UUID idTarefa) {
+        log.info("[inicia] TarefaRestController - ativaTarefa");
+        String email = getUsuarioByToken(token);
+        tarefaService.ativaTarefa(email, idTarefa);
+        log.info("[finaliza] TarefaRestController - ativaTarefa");
     }
 
 	@Override
@@ -60,4 +74,3 @@ public class TarefaRestController implements TarefaAPI {
         return usuario;
     }
 }
-

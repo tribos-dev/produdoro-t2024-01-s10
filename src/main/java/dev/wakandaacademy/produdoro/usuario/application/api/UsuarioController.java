@@ -12,7 +12,6 @@ import dev.wakandaacademy.produdoro.usuario.application.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +36,15 @@ public class UsuarioController implements UsuarioAPI {
 		UsuarioCriadoResponse buscaUsuario = usuarioAppplicationService.buscaUsuarioPorId(idUsuario);
 		log.info("[finaliza] UsuarioController - buscaUsuarioPorId");
 		return buscaUsuario;
+	}
+
+	@Override
+	public void mudaStatusPausaLonga(String token, UUID idUsuario) {
+		log.info("[inicia] UsuarioController - mudaStatusPausaLonga");
+		String usuarioT = validaTokenUsuario(token);
+		usuarioAppplicationService.mudaStatusParaPausaLonga(usuarioT, idUsuario);
+		log.info("[finaliza] UsuarioController - mudaStatusPausaLonga");
+
 	}
 
 	@Override

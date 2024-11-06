@@ -18,35 +18,56 @@ import java.util.UUID;
 @Getter
 @Document(collection = "Tarefa")
 public class Tarefa {
-    @Id
-    private UUID idTarefa;
-    @NotBlank
-    private String descricao;
-    @Indexed
-    private UUID idUsuario;
-    @Indexed
-    private UUID idArea;
-    @Indexed
-    private UUID idProjeto;
-    private StatusTarefa status;
-    private StatusAtivacaoTarefa statusAtivacao;
-    private int contagemPomodoro;
+	@Id
+	private UUID idTarefa;
+	@NotBlank
+	private String descricao;
+	@Indexed
+	private UUID idUsuario;
+	@Indexed
+	private UUID idArea;
+	@Indexed
+	private UUID idProjeto;
+	private StatusTarefa status;
+	private StatusAtivacaoTarefa statusAtivacao;
+	private int contagemPomodoro;
+	private Integer posicao;
 
-    public Tarefa(TarefaRequest tarefaRequest) {
-        this.idTarefa = UUID.randomUUID();
-        this.idUsuario = tarefaRequest.getIdUsuario();
-        this.descricao = tarefaRequest.getDescricao();
-        this.idArea = tarefaRequest.getIdArea();
-        this.idProjeto = tarefaRequest.getIdProjeto();
-        this.status = StatusTarefa.A_FAZER;
-        this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
-        this.contagemPomodoro = 1;
+	public Tarefa(TarefaRequest tarefaRequest, int novaPosicao) {
+		this.idTarefa = UUID.randomUUID();
+		this.idUsuario = tarefaRequest.getIdUsuario();
+		this.descricao = tarefaRequest.getDescricao();
+		this.idArea = tarefaRequest.getIdArea();
+		this.idProjeto = tarefaRequest.getIdProjeto();
+		this.status = StatusTarefa.A_FAZER;
+		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
+		this.contagemPomodoro = 1;
+		this.posicao = novaPosicao;
+	}
+
+	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
+		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
+		}
+	}
+
+    public void atualizaPosicao(int novaPosicao) {
+		this.posicao = novaPosicao;
     }
 
-    public void pertenceAoUsuario(Usuario usuarioPorEmail) {
-        if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
-            throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
+    public void desativaTarefa() {
+        this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
+    }
+
+    public void ativaTarefa() {
+        this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
+    }
+
+    public void verificaSeJaEstaAtiva() {
+        if (this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)) {
+            throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");
         }
+
     }
 
     public void concluiTarefa() {
