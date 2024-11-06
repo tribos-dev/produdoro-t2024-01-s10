@@ -46,7 +46,7 @@ class UsuarioApplicationServiceTest {
     @Test
     void alteraStatusParaFoco_DeveAlterarStatusParaFoco() {
         //cenario
-        doNothing().when(usuarioMock).validaUsuarioPorId(idUsuario);
+        doNothing().when(usuarioMock).validaUsuario(idUsuario);
 
         //acao
         usuarioApplicationService.mudaStatusParaFoco(usuarioEmail, idUsuario);

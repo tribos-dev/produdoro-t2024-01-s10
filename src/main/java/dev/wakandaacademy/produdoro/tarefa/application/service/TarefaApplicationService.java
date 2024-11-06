@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +22,14 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class TarefaApplicationService implements TarefaService {
+
+
+    private void validaUsuario(String email, UUID idUsuario) {
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+        usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuario.validaUsuario(idUsuario);
+    }
+
     private final TarefaRepository tarefaRepository;
     private final UsuarioRepository usuarioRepository;
     private Integer ciclos = 1;
@@ -45,13 +54,21 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - detalhaTarefa");
         return tarefa;
     }
+    @Override
+    public void deletarTarefas(String usuario, UUID idUsuario) {
+        log.info("[inicia] TarefaApplicationService - deletarTarefas");
+        validaUsuario(usuario, idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTodasTarefasId(idUsuario);
+        tarefaRepository.deletaTarefas(tarefas);
+        log.info("[finaliza] TarefaApplicationService - deletarTarefas");
+    }
 
     @Override
     public void deletaTarefasConcluidas(String email, UUID idUsuario) {
         log.info("[inicia] TarefaApplicationService - deletaTarefasConcluidas");
         Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(email);
         Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
-        usuario.pertenceAoUsuario(usuarioPorEmail);
+        usuario.validaUsuario(usuarioPorEmail.getIdUsuario());
         List<Tarefa> tarefasConcluidas = tarefaRepository.buscaTarefasConcluidas(usuario.getIdUsuario());
         if(tarefasConcluidas.isEmpty()){
             throw APIException.build(HttpStatus.NOT_FOUND, "usuário não possui nenhuma tarefa concluida");
