@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,7 +22,7 @@ public interface TarefaAPI {
     @GetMapping("tarefasUsuario/{idUsuario}")
     @ResponseStatus(code = HttpStatus.OK)
     List<TarefaListResponse> buscaTarefasPorIdUsuario(@RequestHeader(name = "Authorization",required = true) String token,
-            @PathVariable UUID idUsuario);
+                                                      @PathVariable UUID idUsuario);
 
     @PatchMapping("ativa-tarefa/{idTarefa}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
