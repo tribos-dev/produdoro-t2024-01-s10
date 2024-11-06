@@ -6,6 +6,7 @@ import java.util.UUID;
 import dev.wakandaacademy.produdoro.pomodoro.domain.ConfiguracaoPadrao;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusAtivacaoTarefa;
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 import dev.wakandaacademy.produdoro.usuario.application.api.UsuarioNovoRequest;
 import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
@@ -16,7 +17,7 @@ public class DataHelper {
     private static final UUID usuario1 = UUID.fromString("a713162f-20a9-4db9-a85b-90cd51ab18f4");
 
     public static Usuario createUsuario() {
-        return Usuario.builder().email("email@email.com").status(StatusUsuario.PAUSA_LONGA).idUsuario(usuario1).build();
+        return Usuario.builder().email("email@email.com").status(StatusUsuario.PAUSA_CURTA).idUsuario(usuario1).build();
     }
 
     public static Tarefa createTarefa() {
@@ -52,5 +53,15 @@ public class DataHelper {
                 Tarefa.builder().build()
 
         );
+    }
+
+    public static List<Tarefa> creatTarefasConcluidas() {
+        return List.of(
+                Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 1").idUsuario(usuario1)
+                        .status(StatusTarefa.CONCLUIDA).build(),
+                Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 2").idUsuario(usuario1)
+                        .status(StatusTarefa.CONCLUIDA).build(),
+                Tarefa.builder().idTarefa(UUID.randomUUID()).descricao("tarefa 3").idUsuario(usuario1)
+                        .status(StatusTarefa.CONCLUIDA).build());
     }
 }

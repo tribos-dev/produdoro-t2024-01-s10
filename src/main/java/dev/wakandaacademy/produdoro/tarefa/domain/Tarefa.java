@@ -39,6 +39,7 @@ public class Tarefa {
 	private StatusAtivacaoTarefa statusAtivacao;
 	private int contagemPomodoro;
 	private int posicaoTarefa;
+	private Integer posicao;
 
 	public Tarefa(TarefaRequest tarefaRequest, int novaPosicao) {
 		this.idTarefa = UUID.randomUUID();
@@ -50,6 +51,7 @@ public class Tarefa {
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 		this.posicaoTarefa = novaPosicao;
+		this.posicao = novaPosicao;
 	}
 
 
@@ -63,4 +65,27 @@ public class Tarefa {
 		this.posicaoTarefa = novaPosicao;
 
 	}
+
+    public void atualizaPosicao(int novaPosicao) {
+		this.posicao = novaPosicao;
+    }
+
+    public void desativaTarefa() {
+        this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
+    }
+
+    public void ativaTarefa() {
+        this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
+    }
+
+    public void verificaSeJaEstaAtiva() {
+        if (this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)) {
+            throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");
+        }
+
+    }
+
+    public void concluiTarefa() {
+        this.status = StatusTarefa.CONCLUIDA;
+    }
 }
