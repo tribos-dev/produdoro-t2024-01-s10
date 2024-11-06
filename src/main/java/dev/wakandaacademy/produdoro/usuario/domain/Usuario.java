@@ -1,5 +1,6 @@
 package dev.wakandaacademy.produdoro.usuario.domain;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.Email;
@@ -42,6 +43,45 @@ public class Usuario {
 		this.email = usuarioNovo.getEmail();
 		this.status = StatusUsuario.FOCO;
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
+	}
+
+
+
+	public void mudaStatusParaPausaCurta() {
+		this.status = StatusUsuario.PAUSA_CURTA;
+	}
+
+	public void mudaStatusParaFoco() {
+		this.status = StatusUsuario.FOCO;
+	}
+    public void validaUsuario(UUID idUsuario) {
+        Optional.of(this.idUsuario)
+                .filter(id -> id.equals(idUsuario))
+                .orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada"));
+
+    }
+	public void mudaStatusParaPausaLonga() {
+		validaSeEstaEmPausaLonga();
+		this.status = StatusUsuario.PAUSA_LONGA;
+	}
+	private void validaSeEstaEmPausaLonga() {
+		if (this.status.equals(StatusUsuario.PAUSA_LONGA)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuario ja esta em pausa longa");
+		}
+	}
+
+
+
+	public void alteraStatusParaFoco(UUID idUsuario) {
+		validaUsuario(idUsuario);
+		verificaStatusFoco();
+	}
+
+	public void verificaStatusFoco() {
+		if (this.status.equals(StatusUsuario.FOCO)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em foco!");
+		}
+		mudaStatusParaFoco();
 	}
 
     public void mudaStatusParaPausaCurta(UUID idUsuario) {
