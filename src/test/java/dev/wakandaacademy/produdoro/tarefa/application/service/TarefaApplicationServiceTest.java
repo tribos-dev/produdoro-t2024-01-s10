@@ -42,6 +42,7 @@ class TarefaApplicationServiceTest {
     @Mock
     UsuarioRepository usuarioRepository;
 
+
     @Test
     void deveRetornarIdTarefaNovaCriada() {
         TarefaRequest request = getTarefaRequest();
@@ -52,36 +53,6 @@ class TarefaApplicationServiceTest {
         assertNotNull(response);
         assertEquals(TarefaIdResponse.class, response.getClass());
         assertEquals(UUID.class, response.getIdTarefa().getClass());
-    }
-
-    @Test
-    void deveRetornarTarefaConcluida() {
-        Usuario usuario = DataHelper.createUsuario();
-        UUID idTarefa = UUID.randomUUID();
-        Tarefa tarefa = Tarefa.builder()
-                .idTarefa(UUID.randomUUID())
-                .status(StatusTarefa.A_FAZER)
-                .idUsuario(usuario.getIdUsuario())
-                .build();
-        when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
-        when(tarefaRepository.buscaTarefaPorId(tarefa.getIdTarefa())).thenReturn(Optional.of(tarefa));
-        when(tarefaRepository.salva(tarefa)).thenReturn(tarefa);
-        tarefaApplicationService.concluiTarefa(usuario.getEmail(), tarefa.getIdTarefa());
-        assertEquals(StatusTarefa.CONCLUIDA, tarefa.getStatus());
-    }
-
-    @Test
-    void deveDeletarTarefasConcluidas() {
-        Usuario usuario = DataHelper.createUsuario();
-        List<Tarefa> tarefasConcluidas = DataHelper.creatTarefasConcluidas();
-        List<Tarefa> tarefas = DataHelper.createListTarefa();
-        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
-        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
-        when(tarefaRepository.buscaTarefasConcluidas(any())).thenReturn(tarefasConcluidas);
-        when(tarefaRepository.buscaTarefasPorUsuario(any())).thenReturn(tarefas);
-        tarefaApplicationService.deletaTarefasConcluidas(usuario.getEmail(), usuario.getIdUsuario());
-        verify(tarefaRepository, times(1)).deletaVariasTarefas(tarefasConcluidas);
-        verify(tarefaRepository, times(1)).atualizaPosicaoDaTarefa(tarefas);
     }
 
     public TarefaRequest getTarefaRequest() {
@@ -149,6 +120,36 @@ class TarefaApplicationServiceTest {
             tarefaApplicationService.ativaTarefa(email, idTarefaInvalido);
         });
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusException());
+    }
+
+    @Test
+    void deveRetornarTarefaConcluida() {
+        Usuario usuario = DataHelper.createUsuario();
+        UUID idTarefa = UUID.randomUUID();
+        Tarefa tarefa = Tarefa.builder()
+                .idTarefa(UUID.randomUUID())
+                .status(StatusTarefa.A_FAZER)
+                .idUsuario(usuario.getIdUsuario())
+                .build();
+        when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorId(tarefa.getIdTarefa())).thenReturn(Optional.of(tarefa));
+        when(tarefaRepository.salva(tarefa)).thenReturn(tarefa);
+        tarefaApplicationService.concluiTarefa(usuario.getEmail(), tarefa.getIdTarefa());
+        assertEquals(StatusTarefa.CONCLUIDA, tarefa.getStatus());
+    }
+
+    @Test
+    void deveDeletarTarefasConcluidas() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefasConcluidas = DataHelper.creatTarefasConcluidas();
+        List<Tarefa> tarefas = DataHelper.createListTarefa();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefasConcluidas(any())).thenReturn(tarefasConcluidas);
+        when(tarefaRepository.buscaTarefasPorUsuario(any())).thenReturn(tarefas);
+        tarefaApplicationService.deletaTarefasConcluidas(usuario.getEmail(), usuario.getIdUsuario());
+        verify(tarefaRepository, times(1)).deletaVariasTarefas(tarefasConcluidas);
+        verify(tarefaRepository, times(1)).atualizaPosicaoDaTarefa(tarefas);
     }
 }
 

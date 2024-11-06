@@ -7,11 +7,9 @@ import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
@@ -19,7 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+
 class UsuarioApplicationServiceTest {
 
     @InjectMocks
@@ -31,7 +29,7 @@ class UsuarioApplicationServiceTest {
     @Test
     void deveMudarParaPausaCurta_QuandoStatusEstiverDiferenteDePausaCurta(){
         //dado
-        Usuario usuario = DataHelper.createUsuario();
+        Usuario usuario = DataHelper.createUsuario2();
         //quando
         when(usuarioRepository.buscaUsuarioPorEmail(anyString())).thenReturn(usuario);
         when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
@@ -39,6 +37,7 @@ class UsuarioApplicationServiceTest {
         //então
         assertEquals(StatusUsuario.PAUSA_CURTA, usuario.getStatus());
         verify(usuarioRepository, times(1)).salva(usuario);
+
     }
 
     private Usuario usuarioMock;
@@ -112,21 +111,6 @@ class UsuarioApplicationServiceTest {
         assertEquals("Usuário já está em foco!", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
         verify(usuarioRepository, times(1)).buscaUsuarioPorEmail("email@email.com");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }
