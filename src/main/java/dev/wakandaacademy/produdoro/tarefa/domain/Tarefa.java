@@ -1,6 +1,7 @@
 package dev.wakandaacademy.produdoro.tarefa.domain;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaAlteracaoRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import lombok.*;
@@ -72,5 +73,13 @@ public class Tarefa {
 
 	public void alteraPosicaTarefa(int novaPosicaoTarefa) {
 		this.posicao = novaPosicaoTarefa;
+	}
+
+	public void incrementaPomodoro() {
+		this.contagemPomodoro++;
+	}
+
+	public void editaTarefa(TarefaAlteracaoRequest tarefaAlteracaoRequest) {
+		this.descricao = tarefaAlteracaoRequest.getDescricao();
 	}
 }

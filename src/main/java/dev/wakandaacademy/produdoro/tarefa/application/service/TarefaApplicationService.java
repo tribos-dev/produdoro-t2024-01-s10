@@ -56,7 +56,7 @@ public class TarefaApplicationService implements TarefaService {
     public void deletarTarefas(String usuario, UUID idUsuario) {
         log.info("[inicia] TarefaApplicationService - deletarTarefas");
         validaUsuario(usuario, idUsuario);
-        List<Tarefa> tarefas = tarefaRepository.buscaTodasTarefasId(idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTodasAsTarefas(idUsuario);
         tarefaRepository.deletaTarefas(tarefas);
         log.info("[finaliza] TarefaApplicationService - deletarTarefas");
     }
