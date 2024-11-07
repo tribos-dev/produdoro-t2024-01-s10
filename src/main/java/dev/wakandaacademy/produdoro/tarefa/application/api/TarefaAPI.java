@@ -7,6 +7,9 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+
 @RestController
 @RequestMapping("/v1/tarefa")
 public interface TarefaAPI {
@@ -16,8 +19,13 @@ public interface TarefaAPI {
 
     @GetMapping("/{idTarefa}")
     @ResponseStatus(code = HttpStatus.OK)
-    TarefaDetalhadoResponse detalhaTarefa(@RequestHeader(name = "Authorization",required = true) String token, 
-    		@PathVariable UUID idTarefa);
+    TarefaDetalhadoResponse detalhaTarefa(@RequestHeader(name = "Authorization", required = true) String token,
+                                          @PathVariable UUID idTarefa);
+
+    @GetMapping("tarefasUsuario/{idUsuario}")
+    @ResponseStatus(code = HttpStatus.OK)
+    List<TarefaListResponse> buscaTarefasPorIdUsuario(@RequestHeader(name = "Authorization",required = true) String token,
+                                                      @PathVariable UUID idUsuario);
 
     @PatchMapping("/edita-tarefa")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
@@ -50,5 +58,5 @@ public interface TarefaAPI {
     @PatchMapping("/conclui-tarefa")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void concluiTarefa(@RequestHeader(name = "Authorization", required = true) String token,
-            @RequestParam(name = "id") UUID idTarefa);
+                       @RequestParam(name = "id") UUID idTarefa);
 }

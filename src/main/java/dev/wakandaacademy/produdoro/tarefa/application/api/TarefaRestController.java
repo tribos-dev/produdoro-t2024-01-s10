@@ -12,6 +12,8 @@ import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.List;
+
 @RestController
 @Log4j2
 @RequiredArgsConstructor
@@ -85,10 +87,18 @@ public class TarefaRestController implements TarefaAPI {
         log.info("[finaliza] TarefaRestController - ativaTarefa");
     }
 
+	@Override
+	public List<TarefaListResponse> buscaTarefasPorIdUsuario(String token, UUID idUsuario) {
+		log.info("[inicia]  TarefaRestController - buscaTarefasPorIdUsuario ");
+		String usuario = getUsuarioByToken(token);
+		List<TarefaListResponse> listaTarefas = tarefaService.buscaTarefaPorUsuario(usuario, idUsuario);
+		log.info("[finaliza]  TarefaRestController - buscaTarefasPorIdUsuario ");
+		return listaTarefas;
+	}
+
     private String getUsuarioByToken(String token) {
         log.debug("[token] {}", token);
-        String usuario = tokenService.getUsuarioByBearerToken(token)
-                .orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
+        String usuario = tokenService.getUsuarioByBearerToken(token).orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
         log.info("[usuario] {}", usuario);
         return usuario;
     }
