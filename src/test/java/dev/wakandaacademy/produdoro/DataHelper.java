@@ -42,7 +42,7 @@ public class DataHelper {
     public static TarefaRequest getTarefaRequest() {
         Usuario usuario = createUsuario();
 
-        TarefaRequest tarefaReq = new TarefaRequest("descricao", usuario.getIdUsuario(), null, null, 1, 1);
+        TarefaRequest tarefaReq = new TarefaRequest("descricao", usuario.getIdUsuario(), null, null, 1);
         return tarefaReq;
     }
 
