@@ -118,11 +118,11 @@ class TarefaApplicationServiceTest {
         List<Tarefa> tarefaList = DataHelper.createListTarefa();
         when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
         when(usuarioRepository.buscaUsuarioPorId(usuario.getIdUsuario())).thenReturn(usuario);
-        when(tarefaRepository.buscaTodasTarefasId(usuario.getIdUsuario())).thenReturn(tarefaList);
+        when(tarefaRepository.buscaTodasAsTarefas(usuario.getIdUsuario())).thenReturn(tarefaList);
         tarefaApplicationService.deletarTarefas(usuario.getEmail(),  usuario.getIdUsuario());
 
         verify(usuarioRepository, times(1)).buscaUsuarioPorId(usuario.getIdUsuario());
-        verify(tarefaRepository, times(1)).buscaTodasTarefasId(usuario.getIdUsuario());
+        verify(tarefaRepository, times(1)).buscaTodasAsTarefas(usuario.getIdUsuario());
         verify(tarefaRepository, times(1)).deletaTarefas(tarefaList);
     }
 
