@@ -1,23 +1,16 @@
 package dev.wakandaacademy.produdoro.tarefa.domain;
 
-import java.util.UUID;
-
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,7 +31,6 @@ public class Tarefa {
 	private StatusTarefa status;
 	private StatusAtivacaoTarefa statusAtivacao;
 	private int contagemPomodoro;
-	private int posicaoTarefa;
 	private Integer posicao;
 
 	public Tarefa(TarefaRequest tarefaRequest, int novaPosicao) {
@@ -50,10 +42,8 @@ public class Tarefa {
 		this.status = StatusTarefa.A_FAZER;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
-		this.posicaoTarefa = novaPosicao;
 		this.posicao = novaPosicao;
 	}
-
 
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
 		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
@@ -61,17 +51,8 @@ public class Tarefa {
 		}
 	}
 
-	public void alteraPosicaTarefa(int novaPosicao) {
-		this.posicaoTarefa = novaPosicao;
-
-	}
-
     public void atualizaPosicao(int novaPosicao) {
 		this.posicao = novaPosicao;
-    }
-
-    public void desativaTarefa() {
-        this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
     }
 
     public void ativaTarefa() {
@@ -88,4 +69,8 @@ public class Tarefa {
     public void concluiTarefa() {
         this.status = StatusTarefa.CONCLUIDA;
     }
+
+	public void alteraPosicaTarefa(int novaPosicaoTarefa) {
+		this.posicao = novaPosicaoTarefa;
+	}
 }

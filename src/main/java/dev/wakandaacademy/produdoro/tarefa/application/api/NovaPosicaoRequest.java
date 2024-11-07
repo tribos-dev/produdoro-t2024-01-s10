@@ -1,16 +1,13 @@
 package dev.wakandaacademy.produdoro.tarefa.application.api;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
-@Value
+@Getter
+@AllArgsConstructor
 public class NovaPosicaoRequest {
-    @NotNull
-    @PositiveOrZero
-    private int posicaoTarefa;
-
+    @PositiveOrZero(message = "Posição deve ser maior ou igual a zero.")
+    private int novaPosicao;
 }
