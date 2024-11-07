@@ -82,4 +82,8 @@ public class Tarefa {
 	public void editaTarefa(TarefaAlteracaoRequest tarefaAlteracaoRequest) {
 		this.descricao = tarefaAlteracaoRequest.getDescricao();
 	}
+
+	public int getPosicaoTarefa() {
+		return posicao;
+	}
 }
