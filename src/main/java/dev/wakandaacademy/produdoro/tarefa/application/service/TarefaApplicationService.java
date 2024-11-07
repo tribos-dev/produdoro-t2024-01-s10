@@ -1,6 +1,7 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.application.api.NovaPosicaoRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaAlteracaoRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
@@ -25,11 +26,6 @@ import java.util.UUID;
 public class TarefaApplicationService implements TarefaService {
 
 
-    private void validaUsuario(String email, UUID idUsuario) {
-        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
-        usuarioRepository.buscaUsuarioPorId(idUsuario);
-        usuario.validaUsuario(idUsuario);
-    }
 
     private final TarefaRepository tarefaRepository;
     private final UsuarioRepository usuarioRepository;
@@ -60,9 +56,17 @@ public class TarefaApplicationService implements TarefaService {
     public void deletarTarefas(String usuario, UUID idUsuario) {
         log.info("[inicia] TarefaApplicationService - deletarTarefas");
         validaUsuario(usuario, idUsuario);
-        List<Tarefa> tarefas = tarefaRepository.buscaTodasTarefasId(idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTodasAsTarefas(idUsuario);
         tarefaRepository.deletaTarefas(tarefas);
         log.info("[finaliza] TarefaApplicationService - deletarTarefas");
+    }
+    @Override
+    public void alteraPosicaoTarefa(String usuario, UUID idTarefa, NovaPosicaoRequest novaPosicao) {
+        log.info("[inicia] TarefaApplicationService - alteraPosicaoTarefa");
+        Tarefa tarefa = detalhaTarefa(usuario, idTarefa);
+        List<Tarefa> todasTarefas = tarefaRepository.buscaTodasAsTarefas(tarefa.getIdUsuario());
+        tarefaRepository.defineNovaPosicaoTarefa(tarefa, todasTarefas, novaPosicao);
+        log.info("[finaliza] TarefaApplicationService - alteraPosicaoTarefa");
     }
 
     @Override
@@ -182,5 +186,10 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - editaTarefa");
     }
 
+    private void validaUsuario(String email, UUID idUsuario) {
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+        usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuario.validaUsuario(idUsuario);
+    }
 
 }

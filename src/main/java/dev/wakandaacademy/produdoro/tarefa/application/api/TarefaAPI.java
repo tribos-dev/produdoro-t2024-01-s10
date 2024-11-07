@@ -44,6 +44,12 @@ public interface TarefaAPI {
     void incrementaTarefaProdudoro(@RequestHeader(name = "Authorization",required = true) String token,
                                           @PathVariable UUID idTarefa);
 
+    @PatchMapping(value = "/{idTarefa}/{novaPosicao}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void alteraPosicaoTarefa(@RequestHeader(name = "Authorization", required = true) String token,
+                             @PathVariable UUID idTarefa, @Valid @RequestBody NovaPosicaoRequest novaPosicao);
+
+
     @PatchMapping("ativa-tarefa/{idTarefa}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void ativaTarefa(@RequestHeader(name = "Authorization", required = true) String token,

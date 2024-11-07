@@ -1,24 +1,17 @@
 package dev.wakandaacademy.produdoro.tarefa.domain;
 
-import java.util.UUID;
-
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaAlteracaoRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -59,20 +52,8 @@ public class Tarefa {
 		}
 	}
 
-    public void editaTarefa(TarefaAlteracaoRequest tarefaAlteracaoRequest) {
-		this.descricao = tarefaAlteracaoRequest.getDescricao();
-    }
-
-	public void incrementaPomodoro() {
-		this.contagemPomodoro++;
-	}
-
     public void atualizaPosicao(int novaPosicao) {
 		this.posicao = novaPosicao;
-    }
-
-    public void desativaTarefa() {
-        this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
     }
 
     public void ativaTarefa() {
@@ -89,4 +70,20 @@ public class Tarefa {
     public void concluiTarefa() {
         this.status = StatusTarefa.CONCLUIDA;
     }
+
+	public void alteraPosicaTarefa(int novaPosicaoTarefa) {
+		this.posicao = novaPosicaoTarefa;
+	}
+
+	public void incrementaPomodoro() {
+		this.contagemPomodoro++;
+	}
+
+	public void editaTarefa(TarefaAlteracaoRequest tarefaAlteracaoRequest) {
+		this.descricao = tarefaAlteracaoRequest.getDescricao();
+	}
+
+	public int getPosicaoTarefa() {
+		return posicao;
+	}
 }
