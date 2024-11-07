@@ -19,9 +19,6 @@ public interface TarefaService {
 	void ativaTarefa(String email, UUID idTarefa);
     List<TarefaListResponse> buscaTarefaPorUsuario(String usuario, UUID idUsuario);
     void concluiTarefa(String usuario, UUID idTarefa);
-<<<<<<< HEAD
     void alteraPosicaoTarefa(String usuario, UUID idTarefa, NovaPosicaoRequest novaPosicao);
 }
-=======
-}
->>>>>>> 293029826167e40594b07f3eed9f3d9329fe69f4
+
