@@ -48,6 +48,24 @@ public class TarefaInfraRepository implements TarefaRepository {
     }
 
     @Override
+    public List<Tarefa> buscaTodasTarefasId(UUID idUsuario) {
+        log.info("[inicia] TarefaInfraRepository - buscaTodasTarefasId");
+        List<Tarefa> tarefas = tarefaSpringMongoDBRepository.findAllByIdUsuario(idUsuario);
+        log.info("[finaliza] TarefaInfraRepository - buscaTodasTarefasId");
+        return tarefas;
+    }
+
+    @Override
+    public void deletaTarefas(List<Tarefa> tarefas) {
+        log.info("[inicia] TarefaInfraRepository - deletaTarefas");
+        Optional.of(tarefas)
+                .filter(t -> !t.isEmpty())
+                .orElseThrow(() -> APIException.build(HttpStatus.BAD_REQUEST, "Usuário não possui tarefa(as) cadastrada(as)"));
+        tarefaSpringMongoDBRepository.deleteAll(tarefas);
+        log.info("[finaliza] TarefaInfraRepository - deletaTarefas");
+    }
+
+    @Override
     public List<Tarefa> buscaTarefasConcluidas(UUID idUsuario) {
         log.info("[inicia] TarefaInfraRepository - buscaTarefasConcluidas");
         Query query = new Query();

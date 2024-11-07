@@ -1,18 +1,14 @@
 package dev.wakandaacademy.produdoro.usuario.application.service;
 
 import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import dev.wakandaacademy.produdoro.handler.APIException;
-
-import org.junit.jupiter.api.BeforeEach;
-
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
@@ -22,14 +18,27 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
-
 class UsuarioApplicationServiceTest {
 
     @InjectMocks
-    private UsuarioApplicationService usuarioApplicationService;
+    UsuarioApplicationService usuarioApplicationService;
 
     @Mock
-    private UsuarioRepository usuarioRepository;
+    UsuarioRepository usuarioRepository;
+
+    @Test
+    void deveMudarParaPausaCurta_QuandoStatusEstiverDiferenteDePausaCurta(){
+        //dado
+        Usuario usuario = DataHelper.createUsuario2();
+        //quando
+        when(usuarioRepository.buscaUsuarioPorEmail(anyString())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        usuarioApplicationService.mudaStatusParaPausaCurta(usuario.getEmail(), usuario.getIdUsuario());
+        //então
+        assertEquals(StatusUsuario.PAUSA_CURTA, usuario.getStatus());
+        verify(usuarioRepository, times(1)).salva(usuario);
+
+    }
 
     private Usuario usuarioMock;
     private final String usuarioEmail = "usuario@teste.com";
@@ -46,7 +55,7 @@ class UsuarioApplicationServiceTest {
     @Test
     void alteraStatusParaFoco_DeveAlterarStatusParaFoco() {
         //cenario
-        doNothing().when(usuarioMock).validaUsuarioPorId(idUsuario);
+        doNothing().when(usuarioMock).validaUsuario(idUsuario);
 
         //acao
         usuarioApplicationService.mudaStatusParaFoco(usuarioEmail, idUsuario);
@@ -102,21 +111,6 @@ class UsuarioApplicationServiceTest {
         assertEquals("Usuário já está em foco!", exception.getMessage());
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
         verify(usuarioRepository, times(1)).buscaUsuarioPorEmail("email@email.com");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }
