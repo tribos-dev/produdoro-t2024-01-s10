@@ -18,6 +18,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.http.HttpStatus;
 
 @Builder
@@ -25,6 +27,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @ToString
+@Log4j2
 @Document(collection = "Usuario")
 public class Usuario {
 	@Id
@@ -45,6 +48,11 @@ public class Usuario {
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
 
+	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
+		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())){
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!");
+		}
+	}
 
 
 	public void mudaStatusParaPausaCurta() {

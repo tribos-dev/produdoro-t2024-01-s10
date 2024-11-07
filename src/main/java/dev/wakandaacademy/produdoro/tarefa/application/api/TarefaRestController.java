@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import java.util.List;
+
 @RestController
 @Log4j2
 @RequiredArgsConstructor
@@ -67,14 +69,6 @@ public class TarefaRestController implements TarefaAPI {
 		log.info("[finaliza] TarefaRestController - alteraPosicaoTarefa");
 	}
 
-
-	private String getUsuarioByToken(String token) {
-		log.debug("[token] {}", token);
-		String usuario = tokenService.getUsuarioByBearerToken(token).orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
-		log.info("[usuario] {}", usuario);
-		return usuario;
-	}
-
 	@Override
 	public void deletaTarefasConcluidas(String token, UUID idUsuario) {
 		log.info("[inicia]  TarefaRestController - deletaTarefasConcluidas");
@@ -97,5 +91,21 @@ public class TarefaRestController implements TarefaAPI {
         String email = getUsuarioByToken(token);
         tarefaService.ativaTarefa(email, idTarefa);
         log.info("[finaliza] TarefaRestController - ativaTarefa");
+    }
+
+	@Override
+	public List<TarefaListResponse> buscaTarefasPorIdUsuario(String token, UUID idUsuario) {
+		log.info("[inicia]  TarefaRestController - buscaTarefasPorIdUsuario ");
+		String usuario = getUsuarioByToken(token);
+		List<TarefaListResponse> listaTarefas = tarefaService.buscaTarefaPorUsuario(usuario, idUsuario);
+		log.info("[finaliza]  TarefaRestController - buscaTarefasPorIdUsuario ");
+		return listaTarefas;
+	}
+
+    private String getUsuarioByToken(String token) {
+        log.debug("[token] {}", token);
+        String usuario = tokenService.getUsuarioByBearerToken(token).orElseThrow(() -> APIException.build(HttpStatus.UNAUTHORIZED, token));
+        log.info("[usuario] {}", usuario);
+        return usuario;
     }
 }
